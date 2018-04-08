@@ -6,10 +6,17 @@
   </div>
 </template>
 <script>
+let bookId=''
 export default {
-  created(){
+  data(){
+    return{
+      bookId: this.$route.params.id
+    }
+
+  },
+  mounted(){
     debugger
-    const bookId=this.$route.params.id
+    bookId=this.$route.params.id
   }
 }
 </script>

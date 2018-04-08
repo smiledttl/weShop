@@ -11,29 +11,29 @@
     <div>
       <ul>        
         <router-link :to="{name:'Home'}" tag="li" >
-          <div><img src="./assets/images/home.png"></div>            
+          <div><img src="./assets/images/home.png"  style="width:75px;height:54px;"></div>            
         </router-link>        
         <router-link :to="{name:'Categories'}" tag="li">
-          <div><img src="./assets/images/category.png"></div>
+          <div><img src="./assets/images/category.png" style="width:75px;height:54px;"></div>
         </router-link>
         <router-link :to="{name:'ShoppingCart'}" tag="li">
-          <div><img src="./assets/images/cart.png"></div>
+          <div><img src="./assets/images/cart.png" style="width:75px;height:54px;"></div>
         </router-link>        
         <router-link :to="{name:'Me'}" tag="li">
-          <div><img src="./assets/images/my.png"></div>
+          <div><img src="./assets/images/my.png" style="width:75px;height:54px;"></div>
         </router-link>        
       </ul>
-      <p><router-link :to="{name:'BookDetails',params:{id:1}}">图书详情1</router-link></p>
-      <p><router-link :to="{name:'BookDetails',params:{id:2}}">图书详情1</router-link></p>
+      <!-- <p><router-link :to="{name:'BookDetails',params:{id:1}}">图书详情1</router-link></p>
+      <p><router-link :to="{name:'BookDetails',params:{id:2}}">图书详情1</router-link></p> -->
     </div>
   </div>
 </template>
 <script>
 export default {
-  created () {
+  /* created () {
     debugger
     const i=0
-  }
+  } */
 }
 </script>
 <style scope>
