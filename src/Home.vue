@@ -5,137 +5,82 @@
     <div class='section' >
       <div>
         <!-- 热门推荐-->
-        <!-- Slider main container -->
-        <div class="swiper-container" ref="slider1">
-            <!-- Additional required wrapper -->
-            <div class="swiper-wrapper"  >
-                <!-- Slides -->
-                <router-link  v-for="(slider,index) in sliders" v-bind:key="index"  class="swiper-slide" :to="{name:'BookDetails',params:{id:slider.id}}" tag="div">
-                  <img :src="slider.img_url" style="width:600px;height:300px;">
-                </router-link>             
-            </div>
-            <!-- If we need pagination -->
-            <div class="swiper-pagination" ref="pagination1" ></div>
-        
-            <!-- If we need navigation buttons -->
-            <div class="swiper-button-prev"></div>
-            <div class="swiper-button-next"></div>
-        
-            <!-- If we need scrollbar -->
-            <div class="swiper-scrollbar"></div>
-        </div>
+        <slider :data="page_data.sliders"></slider>
       </div>
       <!--   快讯-->
       <div class="announcement">
         <label>快讯</label>
-        <span>{{announcement}}</span>
+        <span>{{page_data.announcement}}</span>
       </div>
     </div>
     <div class='section' >
       <!--新书上架-->
-      <book-list heading="新书上架" :books="latestupdated"  @onBookSelect="preview($event)" ></book-list>
+      <book-list heading="新书上架" :books="page_data.latestupdated"  @onBookSelect="preview($event)" ></book-list>
     </div>
     <div class='section' >
     <!--编辑推荐-->
-    <book-list heading="编辑推荐" :books="recommended"  @onBookSelect="preview($event)"></book-list>
+    <book-list heading="编辑推荐" :books="page_data.recommended"  @onBookSelect="preview($event)"></book-list>
     </div>
+    <modal-dialog ref="dialog" @dialogClose="selected=undefined">
+      <div slot="header">
+        <div class="dismiss" 
+        @click.prevent="$refs.dialog.close()" >X
+        </div>
+      </div>
+      <div v-if="selected">
+        <div><img :src="selected.img_url" /></div>
+        <div>{{selected.title}}</div>
+      </div>
+    </modal-dialog>
   </div>
 </template>
-<script>
-  import Swiper from 'swiper'
-  import 'swiper/dist/css/swiper.css'  
+<script>  
   import BookList from './components/BookList'
+  import Slider from './components/Slider'
+  import ModalDialog from './components/Dialog'
+  import Faker from './fixtures/faker'
 
-  const  slider_images = require.context('./assets/sliders' , false , /\.(png|jpg|gif|svg)$/)
-  const  cover_images = require.context('./assets/covers' , false , /\.(png|jpg|gif|svg)$/)
-  debugger
-
+  const isDebugger=process.env.NODE_ENV !== 'production'
 
   export default {
     
     data() {
       return {
-        announcement:'今日上架图书全部8折优惠',
-        sliders:[
-          {id:1,img_url:slider_images("./slider1.jpg")},
-          {id:2,img_url:slider_images("./slider2.jpg")},
-          {id:3,img_url:slider_images("./slider3.jpg")},
-          {id:4,img_url:slider_images("./slider4.jpg")}
-        ],
-        latestupdated:[
-          {
-            id:1,
-            title: 'vue2 实践揭秘',
-            authors: ['梁睿坤','苏炳'],
-            img_url:cover_images("./1.svg")
-          },
-          {
-            id:2,
-            title: 'vue2 实践揭秘2',
-            authors: ['梁睿坤','苏炳'],
-            img_url:cover_images("./2.svg")
-          }
-        ],
-        recommended:[
-          {
-            "id": 1,
-            "title": "揭开数据真相：从小白到数据分析达人",
-            "authors": [
-              "Edward Zaccaro, Daniel Zaccaro"
-            ],
-            "img_url": cover_images("./1.svg")
-          },
-          {
-            "id": 2,
-            "title": "Android 高级进阶",
-            "authors": [
-              "顾浩鑫"
-            ],
-            "img_url": cover_images("./2.svg")
-          },
-          {
-            "id": 3,
-            "title": "淘宝天猫电商运营与数据化选品完全手册",
-            "authors": [
-              "老夏"
-            ],
-            "img_url": cover_images("./3.svg")
-          },
-          {
-            "id": 4,
-            "title": "大数据架构详解：从数据获取到深度学习",
-            "authors": [
-              "朱洁",
-              "罗华霖"
-            ],
-            "img_url": cover_images("./4.svg")
-          },
-        ]
+        page_data:undefined,
+        selected:{undefined}
+        /* announcement:'',
+        sliders:[],
+        latestupdated:[],
+        recommended:[] */
       }
+    },
+    created () {        
+        if (isDebugger){
+          const fakerData=Faker.getHomeData()
+          this.page_data=fakerData
+        } else {
+          this.$http.get('/home').then(res=>{
+            this.announcement = res.body.announcement;
+            this.sliders = res.body.sliders;
+            this.latestupdated = res.body.latestupdated;
+            this.recommended = res.body.recommended; 
+          },(error)=>{
+            console.log('load data failer:${error}')
+          })
+        }
     },
     methods:{
       preview(book){
-        alert("book:"+book.id+", "+book.title+","+book.authors)
+        //alert("book:"+book.id+", "+book.title+","+book.authors)
+        this.selected=book
+        this.$refs.dialog.open()
       }
     },
     components: {
-      BookList
+      BookList,
+      Slider,
+      ModalDialog
     }
-    ,
-    mounted(){
-    new Swiper(this.$refs.slider1, {
-      pagination: this.$refs.pagination1,
-      paginationClickable:true,
-      spaceBetween:30,
-      centeredSlides:true,
-      autoplay:2500,
-      autoplayDisableOnInteraction:true,
-       navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      },
-    })
-  }
 }
 </script>
 <style scope>
@@ -146,5 +91,10 @@
 .announcement {
   min-height:20px;
   border:1px solid red;
+}
+.dismiss {
+  /*border:1px solid red;*/
+  text-align: right;
+  padding-right:15px;
 }
 </style>

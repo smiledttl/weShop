@@ -51,8 +51,9 @@ export default {
 
 .book-list .book-items {
     display: table;
-    width: 100%;
     padding-top: 12px;
+    border: 1px solid blue;
+    width:100%;
   }
 
 .book-list .book-items .book {
@@ -66,7 +67,6 @@ export default {
 
 .book-list .book-items .book .title,.cover {
       margin: 5px auto;
-      width: 90%;
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;      
