@@ -85,7 +85,7 @@
 </script>
 <style scope>
 .swiper-container {
-    width: 600px;
+    width: 780px;
     height: 300px;
 }
 .announcement {
